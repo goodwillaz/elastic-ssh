@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+setuptools = "*"
+twine = "*"
+pytest = "*"
+pytest-mock = "*"
+
+[packages]
+elastic-ssh = {path = ".",editable = true}
+e1839a8 = {path = ".",editable = true}
+
+[requires]
+python_version = "3.5"
