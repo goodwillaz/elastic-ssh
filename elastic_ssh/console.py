@@ -79,7 +79,7 @@ def configure(config: Config):
 def ssh(config: Config, instance: Optional[Text], **kwargs):
     if config.key is None and not kwargs['key']:
         raise click.UsageError(
-            'No key is specified, please run \'aws-ssh configure\' or specify the --key option')
+            'No key is specified, please run \'aws-ec2 configure\' or specify the --key option')
 
     instance_helper = InstanceHelper()
 
