@@ -13,6 +13,8 @@
 # limitations under the License.
 
 from boto3 import client
+from botocore.exceptions import ClientError
+from click import UsageError
 from questionary import Choice, select
 
 
@@ -21,19 +23,22 @@ class InstanceHelper(object):
         self.ec2 = client('ec2')
 
     def get_instance(self, instance):
-        result = self.ec2.describe_instances(
-            Filters=[
-                {
-                    'Name': 'instance-state-code',
-                    'Values': [
-                        '16'
-                    ]
-                }
-            ],
-            InstanceIds=[
-                instance
-            ]
-        )
+        try:
+            result = self.ec2.describe_instances(
+                Filters=[
+                    {
+                        'Name': 'instance-state-code',
+                        'Values': [
+                            '16'
+                        ]
+                    }
+                ],
+                InstanceIds=[
+                    instance
+                ]
+            )
+        except ClientError as e:
+            raise UsageError(e)
 
         if len(result['Reservations']) == 0:
             raise KeyError("Instance not found")
@@ -49,30 +54,33 @@ class InstanceHelper(object):
             PaginationConfig={'PageSize': page_size},
         )
 
-        for page in page_iterator:
-            choices = list(map(InstanceHelper.__create_choice, page['Reservations']))
+        try:
+            for page in page_iterator:
+                choices = list(map(InstanceHelper.__create_choice, page['Reservations']))
 
-            if 'NextToken' in page:
-                choices.append('More')
-            if include_none:
-                choices.append(Choice(title='None', value=False))
+                if 'NextToken' in page:
+                    choices.append('More')
+                if include_none:
+                    choices.append(Choice(title='None', value=False))
 
-            choices.append('Cancel')
+                choices.append('Cancel')
 
-            answer = select(
-                message,
-                choices,
-                use_shortcuts=True,
-                instruction=' ',
-            ).ask()
+                answer = select(
+                    message,
+                    choices,
+                    use_shortcuts=True,
+                    instruction=' ',
+                ).ask()
 
-            if answer == 'More':
-                # Clear the previous line
-                print("\033[A                             \033[A")
-            elif answer == 'Cancel' or answer is None:
-                exit(1)
-            else:
-                return answer
+                if answer == 'More':
+                    # Clear the previous line
+                    print("\033[A                             \033[A")
+                elif answer == 'Cancel' or answer is None:
+                    exit(1)
+                else:
+                    return answer
+        except ClientError as e:
+            raise UsageError(e)
 
     @staticmethod
     def __create_choice(instances):

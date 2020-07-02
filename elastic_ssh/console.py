@@ -18,6 +18,7 @@ from typing import Text, Optional
 
 import botocore.session
 import click
+from click import UsageError
 from prompt_toolkit.completion import PathCompleter
 import questionary
 
@@ -78,7 +79,7 @@ def configure(config: Config):
 @pass_config
 def ssh(config: Config, instance: Optional[Text], **kwargs):
     if config.key is None and not kwargs['key']:
-        raise click.UsageError(
+        raise UsageError(
             'No key is specified, please run \'aws-ec2 configure\' or specify the --key option')
 
     instance_helper = InstanceHelper()
