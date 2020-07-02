@@ -16,6 +16,7 @@ import json
 import logging
 import os
 from pathlib import Path
+from shutil import which
 from typing import Text, Optional
 
 import boto3
@@ -27,9 +28,10 @@ from elastic_ssh.instance import InstanceHelper
 
 class SSH(object):
 
-    def __init__(self):
+    def __init__(self, ssh_exec: Text = which('ssh')):
         self.logger = logging.getLogger('ssh.ssh')
         self.instance_helper = InstanceHelper()
+        self.ssh_exec = ssh_exec
 
     def ssh(self, instance: Text, private_key: Path, instance_user: Text = 'ec2-user',
             bastion: Optional[Text] = None, bastion_user: Optional[Text] = None, bastion_port: int = 22,
@@ -73,7 +75,7 @@ class SSH(object):
 
         self.logger.debug('SSH arguments - %s', json.dumps(ssh_args))
 
-        os.execvp('/usr/bin/ssh', ssh_args)
+        os.execvp(self.ssh_exec, ssh_args)
 
     def __send_ssh_key(self, **kwargs):
         self.logger.debug('Loading public key onto %s for %s', kwargs['InstanceId'], kwargs['InstanceOSUser'])

@@ -14,6 +14,7 @@
 
 import logging
 from pathlib import Path
+from shutil import which
 from typing import Text, Optional
 
 import botocore.session
@@ -78,6 +79,9 @@ def configure(config: Config):
 @click.option('-c', '--command', help="Command to run on instance (instead of terminal session)")
 @pass_config
 def ssh(config: Config, instance: Optional[Text], **kwargs):
+    if not Path(which('ssh')).exists():
+        raise UsageError("The ssh executable could not be found on your PATH")
+
     if config.key is None and not kwargs['key']:
         raise UsageError(
             'No key is specified, please run \'aws-ec2 configure\' or specify the --key option')
