@@ -77,6 +77,36 @@ class SSH(object):
 
         os.execvp(self.ssh_exec, ssh_args)
 
+    def keys(self, instance: Text, private_key: Path, instance_user: Text = 'ec2-user',
+             bastion: Optional[Text] = None, bastion_user: Optional[Text] = None):
+
+        self.logger.debug('Using key-pair at %s', private_key)
+        public_key = private_key.with_name('{name}.pub'.format(name=private_key.name)).resolve()
+
+        # If we have a bastion and the instance we want is not the bastion and it's not public, use the bastion
+        if bastion and bastion_user:
+            bastion_az, bastion_public_dns, _ = self.__instance_info(bastion)
+            self.__send_ssh_key(
+                InstanceId=bastion,
+                InstanceOSUser=bastion_user,
+                AvailabilityZone=bastion_az,
+                SSHPublicKey=public_key.read_text()
+            )
+            self.logger.info('Key-pair published to %s and will be valid for 60 seconds (DNS: %s)', bastion,
+                             bastion_public_dns)
+
+        if bastion and instance != bastion:
+            instance_az, instance_public_dns, instance_private_dns = self.__instance_info(instance)
+            self.__send_ssh_key(
+                InstanceId=instance,
+                InstanceOSUser=instance_user,
+                AvailabilityZone=instance_az,
+                SSHPublicKey=public_key.read_text()
+            )
+
+            self.logger.info('Key-pair published to %s and will be valid for 60 seconds (DNS: %s)', instance,
+                             instance_private_dns)
+
     def __send_ssh_key(self, **kwargs):
         self.logger.debug('Loading public key onto %s for %s', kwargs['InstanceId'], kwargs['InstanceOSUser'])
         try:

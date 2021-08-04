@@ -38,6 +38,7 @@ logger = logging.getLogger('ssh.console')
 @click.option('-d', '--debug', is_flag=True)
 @click.version_option('version')
 def main(ctx, profile: Text, debug: bool):
+    logging.getLogger('ssh').setLevel(logging.INFO)
     if debug:
         logging.getLogger('ssh').setLevel(logging.DEBUG)
         botocore.session.get_session().set_debug_logger()
@@ -100,6 +101,30 @@ def ssh(config: Config, instance: Optional[Text], **kwargs):
               bastion_port=config.bastion_port,
               command=kwargs['command'] or None,
               instance_port=kwargs['port'] or 22)
+
+
+@main.command()
+@click.argument('instance', required=False)
+@click.option('-u', '--user', help="Instance SSH User")
+@click.option('-k', '--key', help="Private SSH Key", type=click.Path(exists=True),
+              callback=lambda _, __, value: Path(value).expanduser().resolve() if value else None)
+@pass_config
+def key(config: Config, instance: Optional[Text], **kwargs):
+    if config.key is None and not kwargs['key']:
+        raise UsageError(
+            'No key is specified, please run \'aws-ec2 configure\' or specify the --key option')
+
+    instance_helper = InstanceHelper()
+
+    if instance is None:
+        instance = instance_helper.select_instance()
+
+    # Get the instance information
+    SSH().keys(instance=instance,
+               private_key=kwargs['key'] or config.key,
+               instance_user=kwargs['user'] or config.instance_user,
+               bastion=config.bastion,
+               bastion_user=config.bastion_user)
 
 
 if __name__ == '__main__':

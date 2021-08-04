@@ -50,13 +50,15 @@ class InstanceHelper(object):
 
         paginator = self.ec2.get_paginator('describe_instances')
         page_iterator = paginator.paginate(
-            Filters=[{'Name': 'instance-state-code', 'Values': ['16']}],  # Instances in a running state only
+            Filters=[{'Name': 'instance-state-name', 'Values': ['running']}],  # Instances in a running state only
             PaginationConfig={'PageSize': page_size},
         )
 
         try:
             for page in page_iterator:
-                choices = list(map(InstanceHelper.__create_choice, page['Reservations']))
+                # Create choices only for instances that don't have a PLatform value (linux)
+                choices = list(map(InstanceHelper.__create_choice,
+                                   [x for x in page['Reservations'] if 'Platform' not in x['Instances'][0].keys()]))
 
                 if 'NextToken' in page:
                     choices.append('More')

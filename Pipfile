@@ -8,9 +8,10 @@ setuptools = "*"
 twine = "*"
 pytest = "*"
 pytest-mock = "*"
+wheel = "*"
 
 [packages]
-elastic-ssh = {path = ".",editable = true}
+elastic-ssh = {editable = true,path = "."}
 
 [requires]
 python_version = "3.5"

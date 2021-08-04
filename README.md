@@ -8,7 +8,7 @@ Follow Amazon's [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGu
 
 ### Installation
 
-Install via you're favorite method for installing Python-based CLI tools: [pip](https://pip.pypa.io/en/stable/), [pipenv](https://pypi.org/project/pipenv/), [easy_install](https://setuptools.readthedocs.io/en/latest/easy_install.html), etc.  I recommend using `pipenv`, creating an environment just for this tool and then creating a symlink from the virtualenv bin directory to a directory on your PATH.
+Install via your favorite method for installing Python-based CLI tools: [pip](https://pip.pypa.io/en/stable/), [pipenv](https://pypi.org/project/pipenv/), [easy_install](https://setuptools.readthedocs.io/en/latest/easy_install.html), etc.  I recommend using `pipenv`, creating an environment just for this tool and then creating a symlink from the virtualenv bin directory to a directory on your PATH.
 
 ```bash
 $ pipenv install -e git+https://github.com/goodwillaz/elastic-ssh\#egg=elastic-ssh
@@ -31,7 +31,7 @@ For help, simply run `aws-ec2 --help` or `aws-ec2 <command> --help`
 
 ### Environment Variable Support
 
-All of the command line flags can be specified as environment variables (if you need to):
+All the command line flags can be specified as environment variables (if you need to):
 
 * AWS_EC2_DEBUG
 * AWS_EC2_PROFILE
