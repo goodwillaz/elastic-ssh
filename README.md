@@ -12,7 +12,7 @@ Install via your favorite method for installing Python-based CLI tools: [pip](ht
 
 ```bash
 $ pipenv install "elastic-ssh @ git+https://github.com/goodwillaz/elastic-ssh"
-$ do ln -s `pipenv --venv`/bin/aws-ec2 /usr/local/bin/aws-ec2
+$ sudo ln -s `pipenv --venv`/bin/aws-ec2 /usr/local/bin/aws-ec2
 ```
 
 Once you've installed the utility, you'll need to configure it.  It uses AWS's Boto library which means it will look in the standard places for AWS Credentials.  To configure the utility with an optional profile name (default is `default`):
