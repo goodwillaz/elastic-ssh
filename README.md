@@ -11,8 +11,8 @@ Follow Amazon's [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGu
 Install via your favorite method for installing Python-based CLI tools: [pip](https://pip.pypa.io/en/stable/), [pipenv](https://pypi.org/project/pipenv/), [easy_install](https://setuptools.readthedocs.io/en/latest/easy_install.html), etc.  I recommend using `pipenv`, creating an environment just for this tool and then creating a symlink from the virtualenv bin directory to a directory on your PATH.
 
 ```bash
-$ pipenv install -e git+https://github.com/goodwillaz/elastic-ssh\#egg=elastic-ssh
-$ sudo ln -s `pipenv --venv`/bin/aws-ec2 /usr/local/bin/aws-ec2
+$ pipenv install "elastic-ssh @ git+https://github.com/goodwillaz/elastic-ssh"
+$ do ln -s `pipenv --venv`/bin/aws-ec2 /usr/local/bin/aws-ec2
 ```
 
 Once you've installed the utility, you'll need to configure it.  It uses AWS's Boto library which means it will look in the standard places for AWS Credentials.  To configure the utility with an optional profile name (default is `default`):
